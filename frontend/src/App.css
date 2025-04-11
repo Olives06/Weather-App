@@ -1,6 +1,6 @@
 /* Container */
 .weather-container {
-  max-width: 500px;
+  max-width: 800px;
   margin: 50px auto;
   padding: 20px;
   background: linear-gradient(920deg, #5141de, #0a533c);
@@ -116,7 +116,7 @@
 
 .forecast-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
   padding: 10px;
 }
@@ -127,6 +127,10 @@
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
 .forecast-time {
@@ -139,12 +143,19 @@
   text-transform: capitalize;
   margin: 5px 0;
   color: #f0f0f0;
+  font-size: 0.9rem;
 }
 
 .forecast-temp {
   font-size: 1.2rem;
   font-weight: bold;
   color: #ffd700;
+}
+
+.forecast-details {
+  font-size: 0.8rem;
+  color: #f0f0f0;
+  margin-top: 5px;
 }
 
 .weather-icon {

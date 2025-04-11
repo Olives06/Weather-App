@@ -20,25 +20,30 @@ const WeatherApp = () => {
     }
 
     try {
-      // Fetch current weather
-      const weatherRes = await fetch(`http://localhost:8000/api/get-weather/?city=${city}`);
-      const weatherJson = await weatherRes.json();
+      // Fetch current weather using the new endpoint
+      const response = await fetch(`http://localhost:8000/api/cities/search/?city=${city}`);
+      const data = await response.json();
 
-      if (weatherJson.error) {
-        setError(weatherJson.error);
+      if (response.status !== 200) {
+        setError(data.error || "Something went wrong. Please try again.");
         setWeatherData(null);
         setForecastData([]);
         return;
-      } else {
-        setWeatherData(weatherJson);
-        setError("");
       }
 
-      // Fetch forecast
-      const forecastRes = await fetch(`http://localhost:8000/api/get-forecast/?city=${city}`);
-      const forecastJson = await forecastRes.json();
+      // Transform the response to match the expected format
+      setWeatherData({
+        city: data.city.name,
+        temperature: data.weather.temperature,
+        description: data.weather.description,
+        humidity: data.weather.humidity,
+        wind_speed: data.weather.wind_speed,
+        icon: data.weather.icon || '01d' // Default icon if not provided
+      });
 
-      setForecastData(forecastJson.forecast);
+      // Set forecast data
+      setForecastData(data.forecast || []);
+      setError("");
 
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -81,18 +86,21 @@ const WeatherApp = () => {
 
       {forecastData.length > 0 && (
         <div className="forecast-container">
-          <h3>Next Forecast (5-Day)</h3>
+          <h3>24-Hour Forecast</h3>
           <div className="forecast-grid">
             {forecastData.map((item, index) => (
               <div key={index} className="forecast-card">
-                <p className="forecast-time">{item.dt_txt}</p>
+                <p className="forecast-time">{new Date(item.dt_txt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 <img
-                  src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
-                  alt="icon"
+                  src={`https://openweathermap.org/img/wn/${item.icon}@2x.png`}
+                  alt="weather icon"
                   className="weather-icon"
                 />
-                <p className="forecast-desc">{item.weather[0].description}</p>
-                <p className="forecast-temp">{item.main.temp}°C</p>
+                <p className="forecast-desc">{item.description}</p>
+                <p className="forecast-temp">{item.temp}°C</p>
+                <p className="forecast-details">
+                  H: {item.humidity}% | W: {item.wind_speed} m/s
+                </p>
               </div>
             ))}
           </div>

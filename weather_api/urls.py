@@ -1,7 +1,12 @@
-from django.urls import path
-from .views import get_weather, get_forecast
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CityViewSet, WeatherDataViewSet, WeatherSearchViewSet
+
+router = DefaultRouter()
+router.register(r'cities', CityViewSet)
+router.register(r'weather', WeatherDataViewSet)
+router.register(r'searches', WeatherSearchViewSet)
 
 urlpatterns = [
-    path('get-weather/', get_weather, name='get_weather'),
-    path('get-forecast/', get_forecast, name='get_forecast'),
+    path('', include(router.urls)),
 ]
